@@ -51,3 +51,69 @@ function ga_pageviews_counter_cron() {
     \Drupal::state()->set('ga_pageviews_counter.last_check', REQUEST_TIME);
   }
 }
+
+/**
+ * Implements hook_views_data().
+ */
+function ga_pageviews_counter_views_data() {
+  $data = [];
+  $data['ga_pageviews_counter'] = [];
+  $data['ga_pageviews_counter']['table'] = [];
+  $data['ga_pageviews_counter']['table']['group'] = t('Google Analytics Pageviews Counter');
+  $data['ga_pageviews_counter']['table']['provider'] = 'ga_pageviews_counter';
+  $data['ga_pageviews_counter']['table']['base'] = [
+    'field'  => 'entity_id',
+    'title'  => t('Google Analytics Pageviews Counter'),
+    'help'   => t('Contains GA statistics (pageviews) from your Google Analytics account.'),
+    'weight' => -10,
+  ];
+  $data['ga_pageviews_counter']['table']['join'] = [
+    'node_field_data' => [
+      'left_field' => 'nid',
+      'field'      => 'entity_id',
+    ],
+  ];
+  $data['ga_pageviews_counter']['entity_id'] = [
+    'title'        => t('GA Pageviews Counter Node'),
+    'help'         => t('Relate GA Pageviews Counter content to the node content'),
+    'relationship' => [
+      'base'       => 'node_field_data',
+      'base field' => 'nid',
+      'id'         => 'standard',
+      'label'      => t('Node ID'),
+    ],
+  ];
+  $data['ga_pageviews_counter']['bundle'] = [
+    'title' => t('Bundle'),
+    'help'  => t('Bundle Name.'),
+    'field' => [
+      'id' => 'standard',
+    ],
+    'sort' => [
+      'id' => 'standard',
+    ],
+    'filter' => [
+      'id' => 'string',
+    ],
+    'argument' => [
+      'id' => 'string',
+    ],
+  ];
+  $data['ga_pageviews_counter']['pageviews'] = [
+    'title' => t('Pageview Counter'),
+    'help'  => t('Pageview counter value.'),
+    'field' => [
+      'id' => 'numeric',
+    ],
+    'sort' => [
+      'id' => 'standard',
+    ],
+    'filter' => [
+      'id' => 'numeric',
+    ],
+    'argument' => [
+      'id' => 'numeric',
+    ],
+  ];
+  return $data;
+}
