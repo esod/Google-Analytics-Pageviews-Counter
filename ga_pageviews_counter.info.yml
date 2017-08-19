@@ -1,0 +1,6 @@
+name: 'Google Analytics Pageviews Counter'
+description: 'Display node view counts collected by your Google Analytics.'
+type: module
+core: 8.x
+dependencies:
+  - google_analytics_reports

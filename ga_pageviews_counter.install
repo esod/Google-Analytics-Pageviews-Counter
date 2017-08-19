@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function gateway_ga_pageviews_schema() {
+
+  $schema['gateway_ga_pageviews'] = [
+    'description' => 'Google Analytics Entity Statistics',
+    'fields' => [
+      'entity_id' => [
+        'description' => 'Entity ID',
+        'type'        => 'serial',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+      ],
+      'bundle' => [
+        'description' => 'Bundle',
+        'type'        => 'varchar',
+        'length'      => 100,
+        'not null'    => TRUE,
+        'default'     => '',
+      ],
+      'pageviews' => [
+        'description' => 'Page Views Counter',
+        'type'        => 'int',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+        'default'     => 0,
+      ],
+    ],
+    'primary key' => ['entity_id', 'entity_type', 'bundle'],
+    'indexes' => [
+      'entity_id' => ['entity_id'],
+    ],
+  ];
+
+  return $schema;
+}
+
+/** 
+ * Implements hook_uninstall().
+ */
+function gateway_ga_pageviews_uninstall() {
+  \Drupal::state()->delete('gateway_ga_pageviews.last_check');
+}

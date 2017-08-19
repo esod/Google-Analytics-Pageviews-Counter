@@ -1,0 +1,53 @@
+<?php
+
+use Drupal\node\Entity\NodeType;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\ga_pageviews_counter\GoogleAnalyticsCounter;
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function ga_pageviews_counter_entity_extra_field_info() {
+  $extra = [];
+  foreach (NodeType::loadMultiple() as $bundle) {
+    $extra['node'][$bundle->Id()]['display']['ga_pageviews_counter'] = [
+      'label'       => t('Pageviews Counter'),
+      'description' => t('Google Analytics Pageviews Counter'),
+      'weight'      => 100,
+      'visible'     => TRUE,
+    ];
+  }
+  return $extra;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view().
+ */
+function ga_pageviews_counter_node_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+  if ($display->getComponent('ga_pageviews_counter')) {
+    $count = (new GoogleAnalyticsCounter())->getPageviews($entity);
+    $build['ga_pageviews_counter'] = [
+      '#type'   => 'markup',
+      '#markup' => '<div class="page-views-counter">' . t('Views: @count', ['@count' => $count]) . '</div>',
+    ];
+  }
+}
+
+/**
+ * Implements hook_node_presave().
+ */
+function ga_pageviews_counter_entity_delete(EntityInterface $entity) {
+  (new GoogleAnalyticsCounter())->deletePageviews($entity);
+}
+
+/**
+ * Implements hook_cron().
+ */
+function ga_pageviews_counter_cron() {
+  $last_check = \Drupal::state()->get('ga_pageviews_counter.last_check', 0);
+  if (REQUEST_TIME > $last_check + 86400) {
+    (new GoogleAnalyticsCounter())->fetchData();
+    \Drupal::state()->set('ga_pageviews_counter.last_check', REQUEST_TIME);
+  }
+}
