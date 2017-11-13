@@ -3,9 +3,9 @@
 /**
  * Implements hook_schema().
  */
-function gateway_ga_pageviews_schema() {
+function ga_pageviews_counter_schema() {
 
-  $schema['gateway_ga_pageviews'] = [
+  $schema['ga_pageviews_counter'] = [
     'description' => 'Google Analytics Entity Statistics',
     'fields' => [
       'entity_id' => [
@@ -29,7 +29,7 @@ function gateway_ga_pageviews_schema() {
         'default'     => 0,
       ],
     ],
-    'primary key' => ['entity_id', 'entity_type', 'bundle'],
+    'primary key' => ['entity_id', 'bundle'],
     'indexes' => [
       'entity_id' => ['entity_id'],
     ],
@@ -41,6 +41,6 @@ function gateway_ga_pageviews_schema() {
 /** 
  * Implements hook_uninstall().
  */
-function gateway_ga_pageviews_uninstall() {
-  \Drupal::state()->delete('gateway_ga_pageviews.last_check');
+function ga_pageviews_counter_uninstall() {
+  \Drupal::state()->delete('ga_pageviews_counter.last_check');
 }
